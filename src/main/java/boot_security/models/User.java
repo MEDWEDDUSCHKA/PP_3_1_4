@@ -1,5 +1,7 @@
 package boot_security.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -30,6 +32,9 @@ public class User implements UserDetails {
     @Column
     private String email;
     
+    @Column
+    private Integer age;
+    
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "users_roles",
@@ -48,12 +53,23 @@ public class User implements UserDetails {
         this.lastName = lastName;
         this.email = email;
     }
+    
+    public User(String username, String password, String firstName, String lastName, String email, Integer age) {
+        this.username = username;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.age = age;
+    }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
     }
     
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public String getPassword() {
         return password;
@@ -64,21 +80,25 @@ public class User implements UserDetails {
         return username;
     }
     
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
     
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
     
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
     
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;
@@ -130,5 +150,13 @@ public class User implements UserDetails {
     
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+    
+    public Integer getAge() {
+        return age;
+    }
+    
+    public void setAge(Integer age) {
+        this.age = age;
     }
 }

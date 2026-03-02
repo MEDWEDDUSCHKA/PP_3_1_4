@@ -38,7 +38,7 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         if (userService.findByUsername("admin") == null) {
-            User admin = new User("admin", "admin", "Admin", "Adminov", "admin@example.com");
+            User admin = new User("admin", "admin", "admin", "admin", "admin@mail.ru", 35);
             Set<Role> adminRoles = new HashSet<>();
             adminRoles.add(roleAdmin);
             adminRoles.add(roleUser);
@@ -47,7 +47,7 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         if (userService.findByUsername("user") == null) {
-            User user = new User("user", "user", "User", "Userov", "user@example.com");
+            User user = new User("user", "user", "user", "user", "user@mail.ru", 30);
             Set<Role> userRoles = new HashSet<>();
             userRoles.add(roleUser);
             user.setRoles(userRoles);

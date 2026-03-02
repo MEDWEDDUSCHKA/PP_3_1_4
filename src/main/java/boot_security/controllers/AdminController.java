@@ -8,6 +8,7 @@ import boot_security.models.User;
 import boot_security.services.RoleService;
 import boot_security.services.UserService;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -22,9 +23,84 @@ public class AdminController {
         this.userService = userService;
         this.roleService = roleService;
     }
-
+    
     @GetMapping
-    public String listUsers() {
+    public String listUsers(Model model, Principal principal) {
+        model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("allRoles", roleService.getAllRoles());
+        
+        // Add current user to model
+        if (principal != null) {
+            User currentUser = userService.findByUsername(principal.getName());
+            model.addAttribute("currentUser", currentUser);
+        }
+        
         return "admin/users";
+    }
+    
+    @GetMapping("/new")
+    public String newUserForm(Model model) {
+        model.addAttribute("user", new User());
+        model.addAttribute("allRoles", roleService.getAllRoles());
+        return "admin/user-form";
+    }
+    
+    @PostMapping
+    public String createUser(@RequestParam("firstName") String firstName,
+                            @RequestParam("lastName") String lastName,
+                            @RequestParam("age") Integer age,
+                            @RequestParam("email") String email,
+                            @RequestParam("password") String password,
+                            @RequestParam("roleIds") List<Long> roleIds) {
+        User user = new User();
+        user.setUsername(firstName); // Using firstName as username
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setAge(age);
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setRoles(roleService.getRolesByIds(roleIds));
+        userService.saveUser(user);
+        return "redirect:/admin";
+    }
+    
+    @GetMapping("/edit/{id}")
+    public String editUserForm(@PathVariable("id") Long id, Model model) {
+        User user = userService.getUserById(id);
+        model.addAttribute("user", user);
+        model.addAttribute("allRoles", roleService.getAllRoles());
+        return "admin/user-form";
+    }
+    
+    @PostMapping("/update")
+    public String updateUser(@RequestParam("id") Long id,
+                            @RequestParam("username") String username,
+                            @RequestParam("firstName") String firstName,
+                            @RequestParam("lastName") String lastName,
+                            @RequestParam("age") Integer age,
+                            @RequestParam("email") String email,
+                            @RequestParam(value = "password", required = false) String password,
+                            @RequestParam("roleIds") List<Long> roleIds) {
+        User user = userService.getUserById(id);
+        user.setUsername(firstName); // Using firstName as username
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setAge(age);
+        user.setEmail(email);
+        
+        // Only update password if provided
+        if (password != null && !password.trim().isEmpty()) {
+            user.setPassword(password);
+        }
+        
+        user.setRoles(roleService.getRolesByIds(roleIds));
+        userService.updateUser(user);
+        return "redirect:/admin";
+    }
+    
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable("id") Long id) {
+        userService.deleteUser(id);
+        return "redirect:/admin";
     }
 }
