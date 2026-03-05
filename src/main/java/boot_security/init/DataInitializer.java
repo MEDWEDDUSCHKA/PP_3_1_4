@@ -17,7 +17,6 @@ public class DataInitializer implements CommandLineRunner {
     private final UserService userService;
     private final RoleRepository roleRepository;
     
-    @Autowired
     public DataInitializer(UserService userService, RoleRepository roleRepository) {
         this.userService = userService;
         this.roleRepository = roleRepository;

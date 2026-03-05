@@ -6,15 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>User Form</title>
     
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
           rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" 
           rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">
@@ -29,27 +26,23 @@
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <!-- User info -->
                     <li class="navbar-text text-white me-3">
                         <i class="bi bi-person-circle"></i>
                         <span sec:authentication="name">Username</span>
                     </li>
                     
-                    <!-- Admin link (only for ADMIN role) -->
                     <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                         <a class="nav-link active" href="/admin">
                             <i class="bi bi-shield-lock"></i> Admin Panel
                         </a>
                     </li>
                     
-                    <!-- User link -->
                     <li class="nav-item" sec:authorize="hasAnyRole('USER', 'ADMIN')">
                         <a class="nav-link" href="/user">
                             <i class="bi bi-person"></i> My Profile
                         </a>
                     </li>
                     
-                    <!-- Logout -->
                     <li class="nav-item">
                         <form th:action="@{/logout}" method="post" class="d-inline">
                             <button type="submit" class="btn btn-outline-light btn-sm ms-2">
@@ -62,7 +55,6 @@
         </div>
     </nav>
 
-    <!-- User Form -->
     <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -151,7 +143,6 @@
         </div>
     </div>
     
-    <!-- Bootstrap JS Bundle (includes Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

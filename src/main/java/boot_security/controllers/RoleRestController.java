@@ -14,7 +14,6 @@ public class RoleRestController {
     
     private final RoleService roleService;
     
-    @Autowired
     public RoleRestController(RoleService roleService) {
         this.roleService = roleService;
     }

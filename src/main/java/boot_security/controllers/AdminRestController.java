@@ -1,6 +1,5 @@
 package boot_security.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import boot_security.models.User;
@@ -17,7 +16,6 @@ public class AdminRestController {
     private final UserService userService;
     private final RoleService roleService;
     
-    @Autowired
     public AdminRestController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
@@ -36,78 +34,57 @@ public class AdminRestController {
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@RequestBody Map<String, Object> userData) {
         try {
-            User user = new User();
-            user.setFirstName((String) userData.get("firstName"));
-            user.setLastName((String) userData.get("lastName"));
-            
-            // Handle age conversion
+            String firstName = (String) userData.get("firstName");
+            String lastName = (String) userData.get("lastName");
+            String email = (String) userData.get("email");
+            String password = (String) userData.get("password");
+        
             Object ageObj = userData.get("age");
-            if (ageObj != null) {
-                user.setAge(ageObj instanceof Integer ? (Integer) ageObj : Integer.parseInt(ageObj.toString()));
-            }
-            
-            user.setEmail((String) userData.get("email"));
-            user.setPassword((String) userData.get("password"));
-            user.setUsername((String) userData.get("firstName"));
-            
-            // Handle roleIds conversion
+            Integer age = ageObj != null ? (ageObj instanceof Integer ? (Integer) ageObj : Integer.parseInt(ageObj.toString())) : null;
+        
             @SuppressWarnings("unchecked")
             List<Object> roleIdsObj = (List<Object>) userData.get("roleIds");
             List<Long> roleIds = new java.util.ArrayList<>();
             for (Object id : roleIdsObj) {
                 roleIds.add(id instanceof Integer ? ((Integer) id).longValue() : (Long) id);
-            }
-            user.setRoles(roleService.getRolesByIds(roleIds));
-            
-            userService.saveUser(user);
-            return ResponseEntity.ok(user);
+        }
+        
+            User newUser = userService.createUser(firstName, lastName, age, email, password, roleIds);
+            return ResponseEntity.ok(newUser);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
+
     
     @PutMapping("/users/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody Map<String, Object> userData) {
         try {
-            User user = userService.getUserById(id);
-            if (user == null) {
-                return ResponseEntity.notFound().build();
-            }
-            
-            user.setFirstName((String) userData.get("firstName"));
-            user.setLastName((String) userData.get("lastName"));
-            
-            // Handle age conversion
-            Object ageObj = userData.get("age");
-            if (ageObj != null) {
-                user.setAge(ageObj instanceof Integer ? (Integer) ageObj : Integer.parseInt(ageObj.toString()));
-            }
-            
-            user.setEmail((String) userData.get("email"));
-            user.setUsername((String) userData.get("firstName"));
-            
+            String firstName = (String) userData.get("firstName");
+            String lastName = (String) userData.get("lastName");
+            String email = (String) userData.get("email");
             String password = (String) userData.get("password");
-            if (password != null && !password.trim().isEmpty()) {
-                user.setPassword(password);
-            }
-            
-            // Handle roleIds conversion
+        
+            Object ageObj = userData.get("age");
+            Integer age = ageObj != null ? (ageObj instanceof Integer ? (Integer) ageObj : Integer.parseInt(ageObj.toString())) : null;
+        
             @SuppressWarnings("unchecked")
             List<Object> roleIdsObj = (List<Object>) userData.get("roleIds");
             List<Long> roleIds = new java.util.ArrayList<>();
             for (Object roleId : roleIdsObj) {
                 roleIds.add(roleId instanceof Integer ? ((Integer) roleId).longValue() : (Long) roleId);
             }
-            user.setRoles(roleService.getRolesByIds(roleIds));
-            
-            userService.updateUser(user);
-            return ResponseEntity.ok(user);
+        
+            userService.updateUserData(id, firstName, lastName, age, email, password, roleIds);
+            User updatedUser = userService.getUserById(id);
+            return ResponseEntity.ok(updatedUser);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
+    
     
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {

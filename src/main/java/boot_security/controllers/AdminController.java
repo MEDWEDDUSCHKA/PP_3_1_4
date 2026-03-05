@@ -1,6 +1,5 @@
 package boot_security.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,18 +17,16 @@ public class AdminController {
     private final UserService userService;
     private final RoleService roleService;
     
-    @Autowired
     public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }
     
     @GetMapping
-    public String listUsers(Model model, Principal principal) {
+    public String showUserList(Model model, Principal principal) {
         model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("allRoles", roleService.getAllRoles());
         
-        // Add current user to model
         if (principal != null) {
             User currentUser = userService.findByUsername(principal.getName());
             model.addAttribute("currentUser", currentUser);
@@ -39,7 +36,7 @@ public class AdminController {
     }
     
     @GetMapping("/new")
-    public String newUserForm(Model model) {
+    public String showNewUserForm(Model model) {
         model.addAttribute("user", new User());
         model.addAttribute("allRoles", roleService.getAllRoles());
         return "admin/user-form";
@@ -52,20 +49,12 @@ public class AdminController {
                             @RequestParam("email") String email,
                             @RequestParam("password") String password,
                             @RequestParam("roleIds") List<Long> roleIds) {
-        User user = new User();
-        user.setUsername(firstName); // Using firstName as username
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setAge(age);
-        user.setEmail(email);
-        user.setPassword(password);
-        user.setRoles(roleService.getRolesByIds(roleIds));
-        userService.saveUser(user);
+        userService.createUser(firstName, lastName, age, email, password, roleIds);    
         return "redirect:/admin";
     }
     
     @GetMapping("/edit/{id}")
-    public String editUserForm(@PathVariable("id") Long id, Model model) {
+    public String showEditUserForm(@PathVariable("id") Long id, Model model) {
         User user = userService.getUserById(id);
         model.addAttribute("user", user);
         model.addAttribute("allRoles", roleService.getAllRoles());
@@ -81,24 +70,11 @@ public class AdminController {
                             @RequestParam("email") String email,
                             @RequestParam(value = "password", required = false) String password,
                             @RequestParam("roleIds") List<Long> roleIds) {
-        User user = userService.getUserById(id);
-        user.setUsername(firstName); // Using firstName as username
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setAge(age);
-        user.setEmail(email);
-        
-        // Only update password if provided
-        if (password != null && !password.trim().isEmpty()) {
-            user.setPassword(password);
-        }
-        
-        user.setRoles(roleService.getRolesByIds(roleIds));
-        userService.updateUser(user);
+        userService.updateUserData(id, firstName, lastName, age, email, password, roleIds);
         return "redirect:/admin";
     }
     
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
         return "redirect:/admin";
