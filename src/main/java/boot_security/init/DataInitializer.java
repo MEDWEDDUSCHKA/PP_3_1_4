@@ -29,12 +29,14 @@ public class DataInitializer implements CommandLineRunner {
         if (roleAdmin == null) {
             roleAdmin = new Role("ROLE_ADMIN");
             roleRepository.save(roleAdmin);
+            System.out.println("Created ROLE_ADMIN");
         }
         
         Role roleUser = roleRepository.findByName("ROLE_USER");
         if (roleUser == null) {
             roleUser = new Role("ROLE_USER");
             roleRepository.save(roleUser);
+            System.out.println("Created ROLE_USER");
         }
 
         if (userService.findByUsername("admin") == null) {
@@ -44,6 +46,9 @@ public class DataInitializer implements CommandLineRunner {
             adminRoles.add(roleUser);
             admin.setRoles(adminRoles);
             userService.saveUser(admin);
+            System.out.println("Created admin user with username: admin, password: admin");
+        } else {
+            System.out.println("Admin user already exists");
         }
 
         if (userService.findByUsername("user") == null) {
@@ -52,6 +57,9 @@ public class DataInitializer implements CommandLineRunner {
             userRoles.add(roleUser);
             user.setRoles(userRoles);
             userService.saveUser(user);
+            System.out.println("Created user with username: user, password: user");
+        } else {
+            System.out.println("User 'user' already exists");
         }
     }
 }
