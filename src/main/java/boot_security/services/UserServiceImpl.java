@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import boot_security.models.User;
+import java.util.Map;
 import boot_security.repositories.UserRepository;
 
 import java.util.List;
@@ -98,6 +99,49 @@ public class UserServiceImpl implements UserService {
             user.setRoles(roleService.getRolesByIds(roleIds));
             userRepository.save(user);
         }
+    }
+
+    @Override
+    @Transactional
+    public User createUserFromMap(Map<String, Object> userData) {
+        String firstName = (String) userData.get("firstName");
+        String lastName = (String) userData.get("lastName");
+        String email = (String) userData.get("email");
+        String password = (String) userData.get("password");
+    
+        Object ageObj = userData.get("age");
+        Integer age = ageObj != null ? (ageObj instanceof Integer ? (Integer) ageObj : Integer.parseInt(ageObj.toString())) : null;
+    
+        @SuppressWarnings("unchecked")
+        List<Object> roleIdsObj = (List<Object>) userData.get("roleIds");
+        List<Long> roleIds = new java.util.ArrayList<>();
+        for (Object id : roleIdsObj) {
+        roleIds.add(id instanceof Integer ? ((Integer) id).longValue() : (Long) id);
+        }
+    
+        return createUser(firstName, lastName, age, email, password, roleIds);
+    }
+
+    @Override
+    @Transactional
+    public User updateUserFromMap(Long id, Map<String, Object> userData) {
+        String firstName = (String) userData.get("firstName");
+        String lastName = (String) userData.get("lastName");
+        String email = (String) userData.get("email");
+        String password = (String) userData.get("password");
+    
+        Object ageObj = userData.get("age");
+        Integer age = ageObj != null ? (ageObj instanceof Integer ? (Integer) ageObj : Integer.parseInt(ageObj.toString())) : null;
+    
+        @SuppressWarnings("unchecked")
+        List<Object> roleIdsObj = (List<Object>) userData.get("roleIds");
+        List<Long> roleIds = new java.util.ArrayList<>();
+        for (Object roleId : roleIdsObj) {
+        roleIds.add(roleId instanceof Integer ? ((Integer) roleId).longValue() : (Long) roleId);
+        }
+    
+        updateUserData(id, firstName, lastName, age, email, password, roleIds);
+        return getUserById(id);
     }
 }
 

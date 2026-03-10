@@ -27,11 +27,8 @@ public class AdminController {
         model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("allRoles", roleService.getAllRoles());
         
-        if (principal != null) {
-            User currentUser = userService.findByUsername(principal.getName());
-            model.addAttribute("currentUser", currentUser);
-        }
-        
+        User currentUser = userService.findByUsername(principal.getName());
+        model.addAttribute("currentUser", currentUser);
         return "admin/users";
     }
     

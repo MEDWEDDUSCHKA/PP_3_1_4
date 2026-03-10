@@ -185,7 +185,7 @@
         
         function loadRoles() {
             console.log('Loading roles...');
-            fetch('/api/roles')
+            fetch('/api/admin/roles')
                 .then(response => {
                     console.log('Roles response:', response);
                     return response.json();
