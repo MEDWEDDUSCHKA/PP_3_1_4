@@ -1,12 +1,14 @@
 package boot_security.controllers;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import boot_security.models.User;
 import boot_security.services.RoleService;
 import boot_security.services.UserService;
-
+import boot_security.models.Role;
+import java.util.Map;
 import java.security.Principal;
 import java.util.List;
 
@@ -75,5 +77,54 @@ public class AdminController {
     public String deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
         return "redirect:/admin";
+    }
+
+    @GetMapping("/api/users")
+    @ResponseBody
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/api/users/{id}")
+    @ResponseBody
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @GetMapping("/api/roles")
+    @ResponseBody
+    public ResponseEntity<List<Role>> getAllRoles() {
+        return ResponseEntity.ok(roleService.getAllRoles());
+    }
+
+    @PostMapping("/api/users")
+    @ResponseBody
+    public ResponseEntity<User> createUserApi(@RequestBody Map<String, Object> userData) {
+        try {
+            User newUser = userService.createUserFromMap(userData);
+            return ResponseEntity.ok(newUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping("/api/users/{id}")
+    @ResponseBody
+    public ResponseEntity<User> updateUserApi(@PathVariable Long id, @RequestBody Map<String, Object> userData) {
+        try {
+            User updatedUser = userService.updateUserFromMap(id, userData);
+            return ResponseEntity.ok(updatedUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping("/api/users/{id}")
+    @ResponseBody
+    public ResponseEntity<Void> deleteUserApi(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok().build();
     }
 }
