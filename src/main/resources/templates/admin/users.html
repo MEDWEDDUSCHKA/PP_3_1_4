@@ -185,7 +185,7 @@
         
         function loadRoles() {
             console.log('Loading roles...');
-            fetch('/admin/api/roles')
+            fetch('/api/admin/roles')
                 .then(response => {
                     console.log('Roles response:', response);
                     return response.json();
@@ -199,7 +199,7 @@
         
         function loadUsers() {
             console.log('Loading users...');
-            fetch('/admin/api/users')
+            fetch('/api/admin/users')
                 .then(response => {
                     console.log('Users response:', response);
                     return response.json();
@@ -240,7 +240,7 @@
         }
         
         function openEditModal(userId) {
-            fetch(`/admin/api/users/${userId}`)
+            fetch(`/api/admin/users/${userId}`)
                 .then(response => response.json())
                 .then(user => {
                     showEditModal(user);
@@ -326,7 +326,7 @@
                 roleIds: Array.from(form.querySelector('[name="roleIds"]').selectedOptions).map(o => parseInt(o.value))
             };
             
-            fetch(`/admin/api/users/${userId}`, {
+            fetch(`/api/admin/users/${userId}`, {
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(userData)
@@ -340,7 +340,7 @@
         }
         
         function openDeleteModal(userId) {
-            fetch(`/admin/api/users/${userId}`)
+            fetch(`/api/admin/users/${userId}`)
                 .then(response => response.json())
                 .then(user => {
                     showDeleteModal(user);
@@ -403,7 +403,7 @@
         }
         
         function deleteUser(userId) {
-            fetch(`/admin/api/users/${userId}`, {
+            fetch(`/api/admin/users/${userId}`, {
                 method: 'DELETE'
             })
             .then(() => {
@@ -431,7 +431,7 @@
                     
                     console.log('Creating user with data:', userData);
                     
-                    fetch('/admin/api/users', {
+                    fetch('/api/admin/users', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify(userData)
