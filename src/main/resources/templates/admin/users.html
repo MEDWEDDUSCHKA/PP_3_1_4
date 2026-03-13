@@ -185,7 +185,7 @@
         
         function loadRoles() {
             console.log('Loading roles...');
-            fetch('/admin/api/roles')
+            fetch('/api/admin/roles')
                 .then(response => {
                     console.log('Roles response:', response);
                     return response.json();
@@ -193,13 +193,20 @@
                 .then(roles => {
                     console.log('Roles loaded:', roles);
                     allRoles = roles;
+                    
+                    const newUserRoleSelect = document.querySelector('#new-user select[name="roleIds"]');
+                    if (newUserRoleSelect) {
+                        newUserRoleSelect.innerHTML = roles.map(role => 
+                            `<option value="${role.id}">${role.name}</option>`
+                        ).join('');
+                    }
                 })
                 .catch(error => console.error('Error loading roles:', error));
         }
         
         function loadUsers() {
             console.log('Loading users...');
-            fetch('/admin/api/users')
+            fetch('/api/admin')
                 .then(response => {
                     console.log('Users response:', response);
                     return response.json();
@@ -240,7 +247,7 @@
         }
         
         function openEditModal(userId) {
-            fetch(`/admin/api/users/${userId}`)
+            fetch(`/api/admin/${userId}`)
                 .then(response => response.json())
                 .then(user => {
                     showEditModal(user);
@@ -318,6 +325,7 @@
             const formData = new FormData(form);
             
             const userData = {
+                id: userId,
                 firstName: formData.get('firstName'),
                 lastName: formData.get('lastName'),
                 age: parseInt(formData.get('age')),
@@ -326,7 +334,7 @@
                 roleIds: Array.from(form.querySelector('[name="roleIds"]').selectedOptions).map(o => parseInt(o.value))
             };
             
-            fetch(`/admin/api/users/${userId}`, {
+            fetch(`/api/admin`, {
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(userData)
@@ -340,7 +348,7 @@
         }
         
         function openDeleteModal(userId) {
-            fetch(`/admin/api/users/${userId}`)
+            fetch(`/api/admin/${userId}`)
                 .then(response => response.json())
                 .then(user => {
                     showDeleteModal(user);
@@ -403,7 +411,7 @@
         }
         
         function deleteUser(userId) {
-            fetch(`/admin/api/users/${userId}`, {
+            fetch(`/api/admin/${userId}`, {
                 method: 'DELETE'
             })
             .then(() => {
@@ -431,7 +439,7 @@
                     
                     console.log('Creating user with data:', userData);
                     
-                    fetch('/admin/api/users', {
+                    fetch('/api/admin', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify(userData)
