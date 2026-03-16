@@ -334,7 +334,7 @@
                 roleIds: Array.from(form.querySelector('[name="roleIds"]').selectedOptions).map(o => parseInt(o.value))
             };
             
-            fetch(`/api/admin`, {
+            fetch(`/api/admin/update-user`, {
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(userData)
@@ -439,7 +439,7 @@
                     
                     console.log('Creating user with data:', userData);
                     
-                    fetch('/api/admin', {
+                    fetch('/api/admin/create-user', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify(userData)

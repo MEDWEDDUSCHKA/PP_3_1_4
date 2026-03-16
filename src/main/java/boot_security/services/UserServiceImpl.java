@@ -43,20 +43,6 @@ public class UserServiceImpl implements UserService {
     
     @Override
     @Transactional
-    public void updateUser(User user) {
-        User existingUser = userRepository.findById(user.getId()).orElse(null);
-        if (existingUser != null) {
-            if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
-                user.setPassword(existingUser.getPassword());
-            } else if (!user.getPassword().equals(existingUser.getPassword())) {
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-            }
-        }
-        userRepository.save(user);
-    }
-    
-    @Override
-    @Transactional
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
@@ -67,39 +53,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username);
     }
 
-    @Override
-    @Transactional
-    public User createUser(String firstName, String lastName, Integer age, String email, String password, List<Long> roleIds) {
-        User user = new User();
-        user.setUsername(firstName);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setAge(age);
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setRoles(roleService.getRolesByIds(roleIds));
-        return userRepository.save(user);
-    }
-
-    @Override
-    @Transactional
-    public void updateUserData(Long id, String firstName, String lastName, Integer age, String email, String password, List<Long> roleIds) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user != null) {
-            user.setUsername(firstName);
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setAge(age);
-            user.setEmail(email);
-        
-            if (password != null && !password.trim().isEmpty()) {
-                user.setPassword(passwordEncoder.encode(password));
-            }
-        
-            user.setRoles(roleService.getRolesByIds(roleIds));
-            userRepository.save(user);
-        }
-    }
 
     @Override
     @Transactional
@@ -118,13 +71,22 @@ public class UserServiceImpl implements UserService {
         for (Object id : roleIdsObj) {
         roleIds.add(id instanceof Integer ? ((Integer) id).longValue() : (Long) id);
         }
-    
-        return createUser(firstName, lastName, age, email, password, roleIds);
+        
+        User user = new User();
+        user.setUsername(firstName);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setAge(age);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRoles(roleService.getRolesByIds(roleIds));
+        return userRepository.save(user);
     }
 
     @Override
     @Transactional
-    public User updateUserFromMap(Long id, Map<String, Object> userData) {
+    public User updateUserFromMap(Map<String, Object> userData) {
+        Long id = ((Number) userData.get("id")).longValue();
         String firstName = (String) userData.get("firstName");
         String lastName = (String) userData.get("lastName");
         String email = (String) userData.get("email");
@@ -139,8 +101,22 @@ public class UserServiceImpl implements UserService {
         for (Object roleId : roleIdsObj) {
         roleIds.add(roleId instanceof Integer ? ((Integer) roleId).longValue() : (Long) roleId);
         }
-    
-        updateUserData(id, firstName, lastName, age, email, password, roleIds);
+
+                User user = userRepository.findById(id).orElse(null);
+        if (user != null) {
+            user.setUsername(firstName);
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setAge(age);
+            user.setEmail(email);
+        
+            if (password != null && !password.trim().isEmpty()) {
+                user.setPassword(passwordEncoder.encode(password));
+            }
+        
+            user.setRoles(roleService.getRolesByIds(roleIds));
+            userRepository.save(user);
+        }
         return getUserById(id);
     }
 }

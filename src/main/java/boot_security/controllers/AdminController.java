@@ -45,16 +45,15 @@ public class AdminController {
         return ResponseEntity.ok(roleService.getAllRoles());
     }
     
-    @PostMapping
+    @PostMapping("/create-user")
     public ResponseEntity<User> createUser(@RequestBody Map<String, Object> userData) {
         User newUser = userService.createUserFromMap(userData);
         return ResponseEntity.ok(newUser);
     }   
     
-    @PutMapping
+    @PutMapping("/update-user")
     public ResponseEntity<User> updateUser(@RequestBody Map<String, Object> userData) {
-        Long id = ((Number) userData.get("id")).longValue();
-        User updatedUser = userService.updateUserFromMap(id, userData);
+        User updatedUser = userService.updateUserFromMap(userData);
         return ResponseEntity.ok(updatedUser);
     }
     
