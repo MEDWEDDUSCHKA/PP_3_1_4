@@ -1,16 +1,16 @@
 package boot_security.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import boot_security.dto.UserDTO;
 import boot_security.models.Role;
 import boot_security.models.User;
 import boot_security.services.RoleService;
 import boot_security.services.UserService;
-
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -46,15 +46,15 @@ public class AdminController {
     }
     
     @PostMapping("/create-user")
-    public ResponseEntity<User> createUser(@RequestBody Map<String, Object> userData) {
-        User newUser = userService.createUserFromMap(userData);
-        return ResponseEntity.ok(newUser);
+    public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO) {
+    User user = userService.createUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), userDTO.getPassword(), userDTO.getAge(), userDTO.getRoleIds());
+    return new ResponseEntity<>(user, HttpStatus.CREATED);
     }   
     
     @PutMapping("/update-user")
-    public ResponseEntity<User> updateUser(@RequestBody Map<String, Object> userData) {
-        User updatedUser = userService.updateUserFromMap(userData);
-        return ResponseEntity.ok(updatedUser);
+    public ResponseEntity<User> updateUser(@RequestBody UserDTO userDTO) {
+    User user = userService.updateUser(userDTO.getId(), userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), userDTO.getPassword(), userDTO.getAge(), userDTO.getRoleIds());
+    return new ResponseEntity<>(user, HttpStatus.OK);
     }
     
     @DeleteMapping("/{id}")

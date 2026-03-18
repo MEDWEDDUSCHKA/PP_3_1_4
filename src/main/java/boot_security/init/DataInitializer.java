@@ -1,15 +1,13 @@
 package boot_security.init;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import boot_security.models.Role;
-import boot_security.models.User;
 import boot_security.repositories.RoleRepository;
 import boot_security.services.UserService;
+import java.util.Arrays;
+import java.util.List;
 
-import java.util.HashSet;
-import java.util.Set;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -38,25 +36,18 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Created ROLE_USER");
         }
 
-        if (userService.findByUsername("admin") == null) {
-            User admin = new User("admin", "admin", "admin", "admin", "admin@mail.ru", 35);
-            Set<Role> adminRoles = new HashSet<>();
-            adminRoles.add(roleAdmin);
-            adminRoles.add(roleUser);
-            admin.setRoles(adminRoles);
-            userService.saveUser(admin);
-            System.out.println("Created admin user with username: admin, password: admin");
+        if (userService.findByEmail("admin@mail.ru") == null) {
+            List<Long> adminRoleIds = Arrays.asList(roleAdmin.getId(), roleUser.getId());
+            userService.createUser("admin", "admin", "admin@mail.ru", "admin", 35, adminRoleIds);
+            System.out.println("Created admin user with email: admin@mail.ru, password: admin");
         } else {
             System.out.println("Admin user already exists");
         }
 
-        if (userService.findByUsername("user") == null) {
-            User user = new User("user", "user", "user", "user", "user@mail.ru", 30);
-            Set<Role> userRoles = new HashSet<>();
-            userRoles.add(roleUser);
-            user.setRoles(userRoles);
-            userService.saveUser(user);
-            System.out.println("Created user with username: user, password: user");
+        if (userService.findByEmail("user@mail.ru") == null) {
+            List<Long> userRoleIds = Arrays.asList(roleUser.getId());
+            userService.createUser("user", "user", "user@mail.ru", "user", 30, userRoleIds);
+            System.out.println("Created user with email: user@mail.ru, password: user");
         } else {
             System.out.println("User 'user' already exists");
         }

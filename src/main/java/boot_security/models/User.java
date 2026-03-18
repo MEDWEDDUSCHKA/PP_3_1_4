@@ -17,15 +17,15 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(unique = true, nullable = false)
-    private String username;
-    
     @Column(nullable = false)
     private String password;
     
     private String firstName;
     private String lastName;
+    
+    @Column(unique = true, nullable = false)
     private String email;
+    
     private Integer age;
     
     @ManyToMany(fetch = FetchType.EAGER)
@@ -39,16 +39,14 @@ public class User implements UserDetails {
     public User() {
     }
     
-    public User(String username, String password, String firstName, String lastName, String email) {
-        this.username = username;
+    public User(String password, String firstName, String lastName, String email) {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
     }
     
-    public User(String username, String password, String firstName, String lastName, String email, Integer age) {
-        this.username = username;
+    public User(String password, String firstName, String lastName, String email, Integer age) {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -70,7 +68,7 @@ public class User implements UserDetails {
     
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
     
     @JsonIgnore
@@ -103,10 +101,6 @@ public class User implements UserDetails {
     
     public void setId(Long id) {
         this.id = id;
-    }
-    
-    public void setUsername(String username) {
-        this.username = username;
     }
     
     public void setPassword(String password) {
