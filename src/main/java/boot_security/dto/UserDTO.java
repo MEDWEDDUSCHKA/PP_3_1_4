@@ -12,6 +12,15 @@ public class UserDTO {
     private List<Long> roleIds;
     
     public UserDTO() {}
+
+    public UserDTO(String firstName, String lastName, String email, String password, Integer age, List<Long> roleIds) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.age = age;
+        this.roleIds = roleIds;
+    }
     
     public Long getId() {
         return id;

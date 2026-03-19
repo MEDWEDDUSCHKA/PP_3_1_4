@@ -47,14 +47,14 @@ public class AdminController {
     
     @PostMapping("/create-user")
     public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO) {
-    User user = userService.createUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), userDTO.getPassword(), userDTO.getAge(), userDTO.getRoleIds());
-    return new ResponseEntity<>(user, HttpStatus.CREATED);
+        User user = userService.createUser(userDTO);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }   
     
     @PutMapping("/update-user")
     public ResponseEntity<User> updateUser(@RequestBody UserDTO userDTO) {
-    User user = userService.updateUser(userDTO.getId(), userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), userDTO.getPassword(), userDTO.getAge(), userDTO.getRoleIds());
-    return new ResponseEntity<>(user, HttpStatus.OK);
+        User user = userService.updateUser(userDTO);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
     
     @DeleteMapping("/{id}")

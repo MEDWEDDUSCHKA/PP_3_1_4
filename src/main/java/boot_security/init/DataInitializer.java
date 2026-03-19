@@ -2,6 +2,8 @@ package boot_security.init;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import boot_security.dto.UserDTO;
 import boot_security.models.Role;
 import boot_security.repositories.RoleRepository;
 import boot_security.services.UserService;
@@ -37,16 +39,16 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         if (userService.findByEmail("admin@mail.ru") == null) {
-            List<Long> adminRoleIds = Arrays.asList(roleAdmin.getId(), roleUser.getId());
-            userService.createUser("admin", "admin", "admin@mail.ru", "admin", 35, adminRoleIds);
+            UserDTO adminDTO = new UserDTO("admin", "admin", "admin@mail.ru", "admin", 35, Arrays.asList(roleAdmin.getId(), roleUser.getId()));
+            userService.createUser(adminDTO);
             System.out.println("Created admin user with email: admin@mail.ru, password: admin");
         } else {
             System.out.println("Admin user already exists");
         }
 
         if (userService.findByEmail("user@mail.ru") == null) {
-            List<Long> userRoleIds = Arrays.asList(roleUser.getId());
-            userService.createUser("user", "user", "user@mail.ru", "user", 30, userRoleIds);
+            UserDTO userDTO = new UserDTO("user", "user", "user@mail.ru", "user", 30, Arrays.asList(roleUser.getId()));
+            userService.createUser(userDTO);
             System.out.println("Created user with email: user@mail.ru, password: user");
         } else {
             System.out.println("User 'user' already exists");
